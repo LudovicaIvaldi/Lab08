@@ -11,19 +11,28 @@ class Controller:
         self._model = model
         self._idMap = {}
         self.fillIDMap()
+        self.nerc=None
 
     def handleWorstCase(self, e):
-        # TO FILL
-        pass
+        maxY=int(self._view._txtYears.value)
+        maxH=int(self._view._txtHours.value)
+        listaSol, persone, ore=self._model.worstCase(self.nerc,maxY, maxH)
+        self._view._txtOut.controls.append(ft.Text(f"Persone affette: {persone}"))
+        self._view._txtOut.controls.append(ft.Text(f"Ore: {ore}"))
+        for i in listaSol:
+            self._view._txtOut.controls.append(ft.Text(str(i)))
+        self._view.update_page()
 
     def fillDD(self):
         nercList = self._model.listNerc
-
         for n in nercList:
-            self._view._ddNerc.options.append(ft.dropdown.Option(n))
+            self._view._ddNerc.options.append(ft.dropdown.Option(key=n.value, data=n, on_click=self.salvaNerc))
         self._view.update_page()
 
     def fillIDMap(self):
         values = self._model.listNerc
         for v in values:
             self._idMap[v.value] = v
+
+    def salvaNerc(self,e):
+        self.nerc=e.control.data
